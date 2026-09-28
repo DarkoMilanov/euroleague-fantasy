@@ -403,7 +403,7 @@
    "team": "darkanelica",
    "manager": "milanovic",
    "joinedFrom": 2,
-   "outFrom": null,
+   "outFrom": 1,
    "pts": {},
    "paid": {}
   }
