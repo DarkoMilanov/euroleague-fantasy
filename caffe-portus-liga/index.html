@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Caffe Portus Liga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+html{color-scheme:light}body{margin:0;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}
+:root{
+  --bg:#EEF0F4; --surface:#FFFFFF; --surface-2:#F6F7FA; --ink:#141A2C; --muted:#5E6679; --line:#DDE1EA;
+  --accent:#D9540B; --accent-soft:#FBE6D9; --gold:#B7861F; --gold-soft:#F6ECD3; --danger:#B42318; --danger-soft:#FBE4E1; --ok:#1F7A4D;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif; --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark; --bg:#0E1120; --surface:#171B2D; --surface-2:#1E2338; --ink:#E9EBF3; --muted:#9AA1B6; --line:#2A3048;
+  --accent:#FF7A33; --accent-soft:#3A2418; --gold:#E0B456; --gold-soft:#332A15; --danger:#FF7B6E; --danger-soft:#3A1C1C; --ok:#5CCB93;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark; --bg:#0E1120; --surface:#171B2D; --surface-2:#1E2338; --ink:#E9EBF3; --muted:#9AA1B6; --line:#2A3048;
+  --accent:#FF7A33; --accent-soft:#3A2418; --gold:#E0B456; --gold-soft:#332A15; --danger:#FF7B6E; --danger-soft:#3A1C1C; --ok:#5CCB93;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.4}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:2px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:13px;color:var(--accent)}
+h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+.sub{color:var(--muted);font-size:14px}
+.num{font-variant-numeric:tabular-nums}
+
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.board>div{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.board .k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.board .v{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;font-variant-numeric:tabular-nums}
+.board .v small{font-size:15px;font-weight:600;color:var(--muted)}
+.board .s{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:480px){.board{grid-template-columns:1fr 1fr}.board>div:first-child{grid-column:1/-1}}
+
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.03em;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab:disabled{opacity:.4;cursor:default}
+.tab .r{color:var(--muted);font-weight:500;margin-left:4px}
+.tab[aria-selected="true"] .r{color:inherit;opacity:.7}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.phead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.phead h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0}
+.phead .meta{font-size:13px;color:var(--muted)}
+.prize{font-family:var(--display);font-weight:700;color:var(--gold);font-size:18px}
+
+ol.rows{list-style:none;margin:0;padding:0}
+.row{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.rank{font-family:var(--display);font-weight:700;font-size:20px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.row.lead{background:var(--gold-soft)}
+.row.lead .rank{color:var(--gold)}
+.who{min-width:0;display:flex;flex-direction:column;gap:1px}
+.team{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgr{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kola{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.kola span{font-size:11.5px;font-variant-numeric:tabular-nums;padding:1px 6px;border-radius:5px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.kola span b{font-weight:600;color:var(--ink);margin-left:3px}
+.pts{font-family:var(--display);font-weight:700;font-size:22px;text-align:right;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px}
+.badge{font-family:var(--body);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--gold);color:var(--surface)}
+.badge.out{background:var(--danger-soft);color:var(--danger)}
+.row.out{opacity:.62}
+.me .team::after{content:"";}
+
+.more{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);cursor:pointer;font-size:16px;line-height:1}
+.actions{grid-column:2/-1;display:flex;gap:8px;flex-wrap:wrap}
+.sechead{padding:10px 16px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;background:var(--surface-2);border-bottom:1px solid var(--line)}
+
+.btn{font-family:var(--body);font-weight:600;font-size:14px;padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{background:var(--danger-soft);border-color:transparent;color:var(--danger)}
+.btn.small{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.admin{display:flex;gap:8px;flex-wrap:wrap}
+.editor{padding:16px;display:flex;flex-direction:column;gap:14px}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+select,input[type=text],input[type=number],input[inputmode]{font:inherit;font-size:15px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);text-transform:none;letter-spacing:0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;font-weight:600;padding:8px 12px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.help{font-size:13px;color:var(--muted);max-width:60ch}
+.elist{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.erow{display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)}
+.erow:last-child{border-bottom:0}
+.erow input{width:100%;text-align:right;font-variant-numeric:tabular-nums}
+.erow .calc{grid-column:1/-1;font-size:12px;color:var(--muted);text-align:right;margin-top:-4px}
+.status{font-size:14px;color:var(--muted)}
+.status.err{color:var(--danger)}
+.status.ok{color:var(--ok)}
+.empty{padding:28px 16px;color:var(--muted);text-align:center}
+.foot{font-size:13px;color:var(--muted);max-width:62ch}
+@media (prefers-reduced-motion:no-preference){.row{transition:background .2s}}
+.savebar{position:sticky;bottom:0;z-index:5;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);border-radius:12px}
+.savebar .btn{border-color:transparent}
+.savebar .msg{flex:1 1 160px;font-size:14px}
+.linkbtn{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:0}
+.settings{padding:16px;display:flex;flex-direction:column;gap:12px}
+.settings input{width:100%}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">EuroLeague Fantasy · 2026/27</div>
+    <h1>Caffe Portus Liga</h1>
+    <div class="sub" id="sub">Učitavam tabelu…</div>
+  </header>
+
+  <section class="board" aria-label="Pregled">
+    <div><span class="k">Vodi u rundi</span><span class="v" id="bLead">—</span><span class="s" id="bLeadS">&nbsp;</span></div>
+    <div><span class="k">Nagrada runde</span><span class="v num" id="bPrize">—</span><span class="s" id="bPrizeS">10 KM × uplatio</span></div>
+    <div><span class="k">Ukupni fond</span><span class="v num" id="bPool">—</span><span class="s" id="bPoolS">5 KM × uplatio po rundi</span></div>
+  </section>
+
+  <div class="admin" id="adminBar" hidden>
+    <button class="btn primary" id="openEntry" type="button">Upiši bodove kola</button>
+    <button class="btn" id="openAdd" type="button">Dodaj učesnika</button>
+    <button class="btn" id="openSettings" type="button">Podešavanja</button>
+  </div>
+
+  <section class="panel" id="settingsPanel" hidden></section>
+  <section class="panel" id="entryPanel" hidden></section>
+  <section class="panel" id="addPanel" hidden></section>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Runde"></nav>
+  <section class="panel" id="table"><div class="empty">Učitavam…</div></section>
+
+  <div class="savebar" id="saveBar" hidden>
+    <span class="msg" id="saveMsg">Imaš nesačuvane promjene.</span>
+    <button class="btn primary" id="saveGh" type="button">Sačuvaj na GitHub</button>
+    <button class="btn" id="dlJson" type="button">Preuzmi podaci.json</button>
+  </div>
+
+  <p class="foot">Runda traje 5 kola. Pobjednik runde je ko osvoji najviše bodova u tih 5 kola, bez obzira na ukupni plasman. Posljednja runda ima 3 kola (36–38). Izbačeni učesnik ostaje upisan u rundama koje je odigrao. <span id="upd"></span></p>
+  <p class="foot"><button class="linkbtn" id="adminToggle" type="button">Admin</button></p>
+</div>
+
+<script>
+let TOTAL_KOLA = 38, PER = 5, ROUNDS = 8;
+const LS = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} } };
+const S = { data: null, players: [], canEdit: LS.get("portus_admin") === "1", dirty: false, sha: null,
+  sel: null, payRound: null, openRow: null, confirmOut: null, entry: { kolo: 1 } };
+const $ = id => document.getElementById(id);
+const fmt = n => (Math.round(n * 100) / 100).toLocaleString("bs-BA", { maximumFractionDigits: 2 });
+const rStart = r => r * PER + 1, rEnd = r => Math.min(r * PER + PER, TOTAL_KOLA), roundOf = k => Math.floor((k - 1) / PER);
+const ptsOf = (p, k) => { const v = p.pts && p.pts[k]; return typeof v === "number" ? v : null; };
+const latestKolo = () => { let m = 0; for (const p of S.players) for (const k in (p.pts || {})) if (typeof p.pts[k] === "number") m = Math.max(m, +k); return m; };
+const inRound = (p, r) => (p.joinedFrom || 1) <= rEnd(r) && (p.outFrom == null || p.outFrom > rStart(r));
+const activeAt = (p, k) => (p.joinedFrom || 1) <= k && (p.outFrom == null || p.outFrom > k);
+const roundSum = (p, r) => { let s = 0; for (let k = rStart(r); k <= rEnd(r); k++) s += ptsOf(p, k) || 0; return s; };
+const totalSum = p => Object.values(p.pts || {}).reduce((a, v) => a + (typeof v === "number" ? v : 0), 0);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const isPaid = (p, r) => !!(p.paid && p.paid[r + 1]);
+const paidCount = r => S.players.filter(p => inRound(p, r) && isPaid(p, r)).length;
+const findP = id => S.players.find(x => x.id === id);
+
+/* ---------- GitHub ---------- */
+function ghRepo() {
+  const saved = LS.get("portus_repo"); if (saved) return saved;
+  const h = location.hostname.match(/^([^.]+)\.github\.io$/i);
+  if (!h) return "";
+  const seg = location.pathname.split("/").filter(Boolean)[0];
+  return h[1] + "/" + (seg && !/\.html?$/.test(seg) ? seg : h[1] + ".github.io");
+}
+const ghToken = () => LS.get("portus_token") || "";
+const b64enc = s => { const b = new TextEncoder().encode(s); let bin = ""; for (let i = 0; i < b.length; i += 0x8000) bin += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(bin); };
+const b64dec = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g, "")), c => c.charCodeAt(0)));
+async function ghFetch(method, body) {
+  const repo = ghRepo(), tok = ghToken();
+  if (!repo || !tok) throw new Error("Upiši repozitorij i token u Podešavanjima.");
+  const r = await fetch(`https://api.github.com/repos/${repo}/contents/podaci.json`, {
+    method, headers: { Authorization: "Bearer " + tok, Accept: "application/vnd.github+json", ...(body ? { "Content-Type": "application/json" } : {}) },
+    body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    if (r.status === 401) throw new Error("Token nije ispravan ili je istekao.");
+    if (r.status === 403) throw new Error("Token nema dozvolu za pisanje u ovaj repozitorij.");
+    if (r.status === 404) throw new Error(`Ne nalazim podaci.json u repozitoriju ${repo}. Provjeri naziv repozitorija i dozvole tokena.`);
+    if (r.status === 409) throw new Error("Neko je u međuvremenu sačuvao promjene. Osvježi stranicu pa ponovi unos.");
+    throw new Error(j.message || ("GitHub greška " + r.status));
+  }
+  return j;
+}
+
+/* ---------- load / save ---------- */
+function applyData(d) {
+  S.data = d; S.players = d.igraci || [];
+  TOTAL_KOLA = d.ukupnoKola || 38; PER = d.kolaPoRundi || 5; ROUNDS = Math.ceil(TOTAL_KOLA / PER);
+}
+async function load() {
+  try {
+    if (S.canEdit && ghToken() && ghRepo()) {
+      const j = await ghFetch("GET"); S.sha = j.sha; applyData(JSON.parse(b64dec(j.content)));
+    } else {
+      const r = await fetch("podaci.json?t=" + Date.now(), { cache: "no-store" });
+      if (!r.ok) throw new Error("podaci.json nije pronađen (" + r.status + ")");
+      applyData(await r.json());
+    }
+  } catch (e) {
+    if (!S.data) { $("sub").textContent = "Tabela se ne može učitati: " + e.message; $("table").innerHTML = `<div class="empty">${esc(e.message)}</div>`; return; }
+  }
+  render();
+}
+function serialize() {
+  S.data.igraci = S.players; S.data.azurirano = new Date().toISOString().slice(0, 16).replace("T", " ");
+  return JSON.stringify(S.data, null, 1) + "\n";
+}
+function markDirty() { S.dirty = true; $("saveMsg").textContent = "Imaš nesačuvane promjene."; $("saveBar").hidden = false; }
+async function saveGh() {
+  const btn = $("saveGh"); btn.disabled = true; $("saveMsg").textContent = "Čuvam na GitHub…";
+  try {
+    if (!S.sha) { const j = await ghFetch("GET"); S.sha = j.sha; }
+    const res = await ghFetch("PUT", { message: "Ažurirani podaci lige", content: b64enc(serialize()), sha: S.sha });
+    S.sha = res.content && res.content.sha; S.dirty = false;
+    $("saveMsg").textContent = "Sačuvano. Ekipa vidi promjene za 1–2 minute.";
+    setTimeout(() => { if (!S.dirty) $("saveBar").hidden = true; }, 5000);
+    render();
+  } catch (e) { $("saveMsg").textContent = "Nije sačuvano: " + e.message; }
+  finally { btn.disabled = false; }
+}
+function dlJson() {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([serialize()], { type: "application/json" }));
+  a.download = "podaci.json"; document.body.appendChild(a); a.click(); a.remove();
+  $("saveMsg").textContent = "Preuzet podaci.json. Zamijeni ga u repozitoriju (Upload files).";
+}
+window.addEventListener("beforeunload", e => { if (S.dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+/* ---------- render ---------- */
+function render() {
+  if (!S.data) return;
+  const L = latestKolo(), cur = L ? roundOf(L) : 0;
+  if (S.sel == null) S.sel = cur;
+  $("sub").textContent = L ? `Odigrano ${L}. kolo · Runda ${cur + 1} (kola ${rStart(cur)}–${rEnd(cur)})` : "Još nema upisanih kola";
+  $("upd").textContent = S.data.azurirano ? `Ažurirano: ${S.data.azurirano}.` : "";
+
+  const inCur = S.players.filter(p => inRound(p, cur));
+  const ranked = inCur.map(p => ({ p, s: roundSum(p, cur) })).sort((a, b) => b.s - a.s);
+  if (L && ranked.length) {
+    $("bLead").textContent = ranked[0].p.team; $("bLead").style.fontSize = ranked[0].p.team.length > 14 ? "20px" : "";
+    $("bLeadS").textContent = `${ranked[0].p.manager} · ${fmt(ranked[0].s)}`;
+  } else { $("bLead").textContent = "—"; $("bLeadS").innerHTML = "&nbsp;"; }
+  const paidCur = paidCount(cur);
+  $("bPrize").innerHTML = `${paidCur * 10} <small>KM</small>`;
+  $("bPrizeS").textContent = `${paidCur}/${inCur.length} uplatilo`;
+  let pool = 0; for (let r = 0; r <= cur; r++) pool += paidCount(r) * 5;
+  $("bPool").innerHTML = `${pool} <small>KM</small>`;
+  $("bPoolS").textContent = `od uplata do ${cur + 1}. runde`;
+
+  let t = `<button class="tab" role="tab" aria-selected="${S.sel === "all"}" data-r="all">Ukupno</button>`;
+  t += `<button class="tab" role="tab" aria-selected="${S.sel === "pay"}" data-r="pay">Uplate</button>`;
+  for (let r = 0; r < ROUNDS; r++) t += `<button class="tab" role="tab" aria-selected="${S.sel === r}" data-r="${r}" ${r > cur ? "disabled" : ""}>R${r + 1}<span class="r">${rStart(r)}–${rEnd(r)}</span></button>`;
+  $("tabs").innerHTML = t;
+
+  renderTable(L);
+  $("adminBar").hidden = !S.canEdit;
+  $("adminToggle").textContent = S.canEdit ? "Izađi iz admin načina" : "Admin";
+}
+
+function rowHtml(p, rank, val, extra, cls) {
+  const open = S.canEdit && S.openRow === p.id;
+  let actions = "";
+  if (open) {
+    if (p.outFrom != null) actions = `<button class="btn small" data-act="back" data-id="${p.id}">Vrati u ligu</button>`;
+    else if (S.confirmOut === p.id) {
+      const L = latestKolo(), cur = L ? roundOf(L) : 0;
+      let o = ""; for (let r = 0; r < ROUNDS; r++) o += `<option value="${r}" ${r === cur ? "selected" : ""}>od Runde ${r + 1} (kola ${rStart(r)}–${rEnd(r)})</option>`;
+      actions = `<select id="outR" aria-label="Od koje runde je izbačen">${o}</select><button class="btn small danger" data-act="outok" data-id="${p.id}">Potvrdi izbacivanje</button><button class="btn small" data-act="cancel">Odustani</button>`;
+    } else actions = `<button class="btn small danger" data-act="out" data-id="${p.id}">Izbaci</button>`;
+    actions = `<div class="actions">${actions}</div>`;
+  }
+  return `<li class="row ${cls || ""}">
+    <div class="rank">${rank}</div>
+    <div class="who"><span class="team">${esc(p.team)}</span><span class="mgr">${esc(p.manager)}</span>${extra || ""}</div>
+    <div class="pts">${val}${S.canEdit ? `<button class="more" aria-label="Opcije za ${esc(p.team)}" data-act="more" data-id="${p.id}">⋯</button>` : ""}</div>
+    ${actions}
+  </li>`;
+}
+
+function renderTable(L) {
+  const el = $("table");
+  if (!S.players.length) { el.innerHTML = `<div class="empty">Nema učesnika.</div>`; return; }
+  if (S.sel === "pay") return renderPay(L);
+  if (S.sel === "all") {
+    const act = S.players.filter(p => p.outFrom == null).sort((a, b) => totalSum(b) - totalSum(a));
+    const out = S.players.filter(p => p.outFrom != null).sort((a, b) => totalSum(b) - totalSum(a));
+    let h = `<div class="phead"><h2>Ukupna tabela</h2><span class="meta">${act.length} aktivnih · ${L} kola</span></div><ol class="rows">`;
+    act.forEach((p, i) => h += rowHtml(p, i + 1, fmt(totalSum(p)), "", i === 0 && L ? "lead" : ""));
+    h += `</ol>`;
+    if (out.length) {
+      h += `<div class="sechead">Izbačeni</div><ol class="rows">`;
+      out.forEach(p => h += rowHtml(p, "–", fmt(totalSum(p)), `<div class="kola"><span>izbačen od ${p.outFrom}. kola</span></div>`, "out"));
+      h += `</ol>`;
+    }
+    el.innerHTML = h; return;
+  }
+  const r = S.sel, s0 = rStart(r), s1 = rEnd(r);
+  const played = Math.max(0, Math.min(L, s1) - s0 + 1), len = s1 - s0 + 1, done = played === len;
+  const list = S.players.filter(p => inRound(p, r)).map(p => ({ p, s: roundSum(p, r) })).sort((a, b) => b.s - a.s);
+  const outs = S.players.filter(p => !inRound(p, r) && p.outFrom != null && p.outFrom <= s0);
+  let h = `<div class="phead"><div><h2>Runda ${r + 1}</h2><span class="meta">Kola ${s0}–${s1} · odigrano ${played}/${len}</span></div><span class="prize num">${paidCount(r) * 10} KM</span></div><ol class="rows">`;
+  list.forEach(({ p, s }, i) => {
+    let chips = "";
+    for (let k = s0; k <= s1; k++) { const v = ptsOf(p, k); if (k <= L) chips += `<span>K${k}<b>${v == null ? "–" : fmt(v)}</b></span>`; }
+    const lead = i === 0 && played > 0;
+    h += rowHtml(p, i + 1, `${lead ? `<span class="badge">${done ? "Pobjednik" : "Vodi"}</span>` : ""}${fmt(s)}`, chips ? `<div class="kola">${chips}</div>` : "", lead ? "lead" : "");
+  });
+  h += `</ol>`;
+  if (S.canEdit && outs.length && r === (L ? roundOf(L) : 0)) {
+    h += `<div class="sechead">Izbačeni</div><ol class="rows">`;
+    outs.forEach(p => h += rowHtml(p, "–", "", `<div class="kola"><span>izbačen od ${p.outFrom}. kola</span></div>`, "out"));
+    h += `</ol>`;
+  }
+  el.innerHTML = h;
+}
+
+function renderPay(L) {
+  const cur = L ? roundOf(L) : 0;
+  if (S.payRound == null || S.payRound > cur) S.payRound = cur;
+  const r = S.payRound;
+  const list = S.players.filter(p => inRound(p, r)).sort((a, b) => (isPaid(a, r) - isPaid(b, r)) || a.team.localeCompare(b.team, "sr"));
+  const paid = list.filter(p => isPaid(p, r)).length, owe = list.length - paid;
+  let chips = ""; for (let i = 0; i <= cur; i++) chips += `<button class="tab" data-pr="${i}" aria-pressed="${i === r}" style="${i === r ? "background:var(--ink);color:var(--bg);border-color:var(--ink)" : ""}">R${i + 1}</button>`;
+  let h = `<div class="phead"><div><h2>Uplate · Runda ${r + 1}</h2><span class="meta">Rok: kraj ${rEnd(r)}. kola</span></div><span class="prize num">${paid * 15} KM</span></div>
+  <div class="editor" style="gap:12px">
+    <div class="tabs">${chips}</div>
+    <div class="board">
+      <div><span class="k">Uplatilo</span><span class="v num">${paid}<small>/${list.length}</small></span><span class="s">${paid * 15} KM prikupljeno</span></div>
+      <div><span class="k">Nagrada runde</span><span class="v num">${paid * 10} <small>KM</small></span><span class="s">10 KM × ${paid}</span></div>
+      <div><span class="k">U ukupni fond</span><span class="v num">${paid * 5} <small>KM</small></span><span class="s">5 KM × ${paid}</span></div>
+    </div>
+    <p class="help">${owe ? `Još ${owe} ${owe === 1 ? "učesnik nije platio" : "učesnika nije platilo"} (${owe * 15} KM).` : "Svi su platili za ovu rundu."}</p>
+  </div><ol class="rows">`;
+  list.forEach(p => {
+    const ok = isPaid(p, r);
+    const ctl = S.canEdit ? `<button class="btn small ${ok ? "" : "primary"}" data-act="pay" data-id="${p.id}" data-r="${r}">${ok ? "Poništi" : "Platio"}</button>` : "";
+    h += `<li class="row"><div class="rank" style="font-size:16px;color:${ok ? "var(--ok)" : "var(--danger)"}">${ok ? "✓" : "✗"}</div>
+      <div class="who"><span class="team">${esc(p.team)}</span><span class="mgr">${esc(p.manager)}</span></div>
+      <div class="pts" style="font-size:15px;font-family:var(--body);font-weight:600;color:${ok ? "var(--ok)" : "var(--danger)"}">${ok ? "Platio" : "Duguje 15 KM"}${ctl}</div></li>`;
+  });
+  $("table").innerHTML = h + `</ol>`;
+}
+
+/* ---------- admin panels ---------- */
+function renderSettings() {
+  $("settingsPanel").innerHTML = `<div class="phead"><h2>Podešavanja</h2><button class="btn small" data-act="closeSettings">Zatvori</button></div>
+  <div class="settings">
+    <label class="f" for="sRepo">Repozitorij (korisnik/naziv)<input id="sRepo" type="text" autocomplete="off" placeholder="npr. darko/caffe-portus-liga" value="${esc(ghRepo())}"></label>
+    <label class="f" for="sTok">GitHub token<input id="sTok" type="password" autocomplete="off" placeholder="github_pat_…" value="${esc(ghToken())}"></label>
+    <p class="help">Token se čuva samo u ovom pregledaču, na ovom uređaju. Napravi ga na GitHub-u: Settings → Developer settings → Fine-grained tokens, samo za ovaj repozitorij, sa dozvolom Contents: Read and write. Bez tokena možeš koristiti dugme "Preuzmi podaci.json".</p>
+    <div class="ctrl"><button class="btn primary" id="saveSettings" type="button">Sačuvaj podešavanja</button><button class="btn" id="clearTok" type="button">Obriši token</button><span class="status" id="sStatus"></span></div>
+  </div>`;
+}
+function renderEntry() {
+  const k = S.entry.kolo;
+  const list = S.players.filter(p => activeAt(p, k)).sort((a, b) => a.team.localeCompare(b.team, "sr"));
+  let opts = ""; for (let i = 1; i <= TOTAL_KOLA; i++) opts += `<option value="${i}" ${i === k ? "selected" : ""}>${i}. kolo</option>`;
+  const rows = list.map(p => { const c = ptsOf(p, k);
+    return `<div class="erow"><div class="who"><span class="team">${esc(p.team)}</span><span class="mgr">${esc(p.manager)}</span></div>
+      <input id="e_${p.id}" data-id="${p.id}" inputmode="decimal" autocomplete="off" value="${c == null ? "" : String(c).replace(".", ",")}" aria-label="Bodovi za ${esc(p.team)}"></div>`; }).join("");
+  $("entryPanel").innerHTML = `<div class="phead"><h2>Upiši bodove</h2><button class="btn small" data-act="closeEntry">Zatvori</button></div>
+  <div class="editor">
+    <div class="ctrl"><label class="f" for="eKolo">Kolo<select id="eKolo">${opts}</select></label></div>
+    <p class="help">Upiši koliko je svako osvojio u ovom kolu. Tracker sam sabira rundu (5 kola) i ukupni rezultat. Prazno polje znači da bodovi nisu upisani.</p>
+    <div class="elist">${rows || `<div class="empty">Nema aktivnih učesnika za ovo kolo.</div>`}</div>
+    <div class="ctrl"><button class="btn primary" id="applyEntry" type="button">Primijeni ${k}. kolo</button><span class="status" id="eStatus"></span></div>
+  </div>`;
+}
+const parseNum = s => { s = String(s).trim().replace(/\s/g, "").replace(",", "."); if (s === "") return null; const n = Number(s); return isFinite(n) ? n : NaN; };
+function applyEntry() {
+  const k = S.entry.kolo, st = $("eStatus"); const vals = [];
+  for (const inp of document.querySelectorAll("#entryPanel input[data-id]")) {
+    const v = parseNum(inp.value);
+    if (Number.isNaN(v)) { st.className = "status err"; st.textContent = "Neispravan broj kod: " + inp.getAttribute("aria-label").replace("Bodovi za ", "") + ". Koristi npr. 145,9."; inp.focus(); return; }
+    vals.push([findP(inp.dataset.id), v]);
+  }
+  let n = 0;
+  for (const [p, v] of vals) { if (ptsOf(p, k) === v) continue; p.pts = p.pts || {}; if (v == null) delete p.pts[k]; else p.pts[k] = v; n++; }
+  if (!n) { st.className = "status"; st.textContent = "Nema promjena."; return; }
+  markDirty(); render();
+  st.className = "status ok"; st.textContent = `Upisano ${k}. kolo (${n} učesnika). Klikni "Sačuvaj na GitHub".`;
+}
+function renderAdd() {
+  const L = latestKolo();
+  $("addPanel").innerHTML = `<div class="phead"><h2>Dodaj učesnika</h2><button class="btn small" data-act="closeAdd">Zatvori</button></div>
+  <div class="editor">
+    <div class="ctrl">
+      <label class="f" for="aTeam" style="flex:1 1 180px">Ime tima<input id="aTeam" type="text" autocomplete="off"></label>
+      <label class="f" for="aMgr" style="flex:1 1 180px">Ime i prezime<input id="aMgr" type="text" autocomplete="off"></label>
+      <label class="f" for="aFrom">Igra od kola<input id="aFrom" type="number" min="1" max="${TOTAL_KOLA}" value="${Math.min(L + 1, TOTAL_KOLA)}" style="width:90px"></label>
+    </div>
+    <div class="ctrl"><button class="btn primary" id="saveAdd" type="button">Dodaj</button><span class="status" id="aStatus"></span></div>
+  </div>`;
+}
+function addPlayer() {
+  const team = $("aTeam").value.trim(), manager = $("aMgr").value.trim(), from = Math.max(1, Math.min(TOTAL_KOLA, parseInt($("aFrom").value) || 1)), st = $("aStatus");
+  if (!team || !manager) { st.className = "status err"; st.textContent = "Upiši ime tima i ime učesnika."; return; }
+  S.players.push({ id: "p" + Date.now().toString(36), team, manager, joinedFrom: from, outFrom: null, pts: {}, paid: {} });
+  $("aTeam").value = ""; $("aMgr").value = ""; markDirty(); render();
+  st.className = "status ok"; st.textContent = `Dodan ${team}. Klikni "Sačuvaj na GitHub".`;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const pr = e.target.closest("[data-pr]"); if (pr) { S.payRound = +pr.dataset.pr; render(); return; }
+  const tab = e.target.closest(".tab");
+  if (tab && !tab.disabled && tab.dataset.r != null) { const v = tab.dataset.r; S.sel = v === "all" || v === "pay" ? v : +v; S.openRow = null; render(); return; }
+  const b = e.target.closest("[data-act]");
+  if (b) {
+    const a = b.dataset.act, p = findP(b.dataset.id);
+    if (a === "pay") { p.paid = p.paid || {}; const key = +b.dataset.r + 1; if (p.paid[key]) delete p.paid[key]; else p.paid[key] = true; markDirty(); render(); }
+    else if (a === "more") { S.openRow = S.openRow === p.id ? null : p.id; S.confirmOut = null; render(); }
+    else if (a === "out") { S.confirmOut = p.id; render(); }
+    else if (a === "outok") { const sel = $("outR"); p.outFrom = rStart(sel ? +sel.value : 0); S.confirmOut = S.openRow = null; markDirty(); render(); }
+    else if (a === "back") { p.outFrom = null; S.openRow = null; markDirty(); render(); }
+    else if (a === "cancel") { S.confirmOut = null; render(); }
+    else if (a === "closeEntry") $("entryPanel").hidden = true;
+    else if (a === "closeAdd") $("addPanel").hidden = true;
+    else if (a === "closeSettings") $("settingsPanel").hidden = true;
+    return;
+  }
+  const id = e.target.id;
+  if (id === "adminToggle") { S.canEdit = !S.canEdit; LS.set("portus_admin", S.canEdit ? "1" : null); ["entryPanel", "addPanel", "settingsPanel"].forEach(x => $(x).hidden = true); if (S.canEdit && !(ghToken() && ghRepo())) { renderSettings(); $("settingsPanel").hidden = false; } else if (S.canEdit) load(); render(); }
+  else if (id === "openEntry") { S.entry.kolo = Math.min(latestKolo() + 1, TOTAL_KOLA); $("addPanel").hidden = $("settingsPanel").hidden = true; renderEntry(); $("entryPanel").hidden = false; $("entryPanel").scrollIntoView({ block: "start" }); }
+  else if (id === "openAdd") { $("entryPanel").hidden = $("settingsPanel").hidden = true; renderAdd(); $("addPanel").hidden = false; }
+  else if (id === "openSettings") { $("entryPanel").hidden = $("addPanel").hidden = true; renderSettings(); $("settingsPanel").hidden = false; }
+  else if (id === "applyEntry") applyEntry();
+  else if (id === "saveAdd") addPlayer();
+  else if (id === "saveGh") saveGh();
+  else if (id === "dlJson") dlJson();
+  else if (id === "saveSettings") { LS.set("portus_repo", $("sRepo").value.trim() || null); LS.set("portus_token", $("sTok").value.trim() || null); $("sStatus").className = "status ok"; $("sStatus").textContent = "Sačuvano."; if (!S.dirty) load(); }
+  else if (id === "clearTok") { LS.set("portus_token", null); $("sTok").value = ""; $("sStatus").className = "status"; $("sStatus").textContent = "Token obrisan sa ovog uređaja."; }
+});
+document.addEventListener("change", e => { if (e.target.id === "eKolo") { S.entry.kolo = +e.target.value; renderEntry(); } });
+
+load();
+</script>
+</body>
+</html>
