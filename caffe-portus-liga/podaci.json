@@ -2,7 +2,7 @@
  "liga": "Caffe Portus Liga",
  "ukupnoKola": 38,
  "kolaPoRundi": 5,
- "azurirano": "2026-09-28",
+ "azurirano": "2026-09-28 14:21",
  "igraci": [
   {
    "id": "p01",
@@ -396,6 +396,15 @@
    "pts": {
     "1": 71.55
    },
+   "paid": {}
+  },
+  {
+   "id": "pmulc5s39",
+   "team": "darkanelica",
+   "manager": "milanovic",
+   "joinedFrom": 2,
+   "outFrom": null,
+   "pts": {},
    "paid": {}
   }
  ]
