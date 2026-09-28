@@ -174,19 +174,26 @@ function ghRepo() {
   return h[1] + "/" + (seg && !/\.html?$/.test(seg) ? seg : h[1] + ".github.io");
 }
 const ghToken = () => LS.get("portus_token") || "";
+function ghPath() {
+  const segs = location.pathname.split("/").filter(Boolean);
+  if (segs.length && /\.html?$/i.test(segs[segs.length - 1])) segs.pop();
+  const userSite = /^([^.]+)\.github\.io$/i.test(location.hostname) && ghRepo().split("/")[1].toLowerCase() === location.hostname.toLowerCase();
+  if (!userSite && segs.length) segs.shift();
+  return segs.map(encodeURIComponent).concat("podaci.json").join("/");
+}
 const b64enc = s => { const b = new TextEncoder().encode(s); let bin = ""; for (let i = 0; i < b.length; i += 0x8000) bin += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(bin); };
 const b64dec = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g, "")), c => c.charCodeAt(0)));
 async function ghFetch(method, body) {
   const repo = ghRepo(), tok = ghToken();
   if (!repo || !tok) throw new Error("Upiši repozitorij i token u Podešavanjima.");
-  const r = await fetch(`https://api.github.com/repos/${repo}/contents/podaci.json`, {
+  const r = await fetch(`https://api.github.com/repos/${repo}/contents/${ghPath()}`, {
     method, headers: { Authorization: "Bearer " + tok, Accept: "application/vnd.github+json", ...(body ? { "Content-Type": "application/json" } : {}) },
     body: body ? JSON.stringify(body) : undefined, cache: "no-store" });
   const j = await r.json().catch(() => ({}));
   if (!r.ok) {
     if (r.status === 401) throw new Error("Token nije ispravan ili je istekao.");
     if (r.status === 403) throw new Error("Token nema dozvolu za pisanje u ovaj repozitorij.");
-    if (r.status === 404) throw new Error(`Ne nalazim podaci.json u repozitoriju ${repo}. Provjeri naziv repozitorija i dozvole tokena.`);
+    if (r.status === 404) throw new Error(`Ne nalazim ${ghPath()} u repozitoriju ${repo}. Provjeri naziv repozitorija i dozvole tokena.`);
     if (r.status === 409) throw new Error("Neko je u međuvremenu sačuvao promjene. Osvježi stranicu pa ponovi unos.");
     throw new Error(j.message || ("GitHub greška " + r.status));
   }
