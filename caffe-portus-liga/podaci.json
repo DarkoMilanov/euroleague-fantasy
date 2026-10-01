@@ -2,7 +2,7 @@
  "liga": "Caffe Portus Liga",
  "ukupnoKola": 38,
  "kolaPoRundi": 5,
- "azurirano": "2026-09-29 08:59",
+ "azurirano": "2026-10-01 05:10",
  "igraci": [
   {
    "id": "p01",
@@ -11,7 +11,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 189.2
+    "1": 189.2,
+    "2": 186.95
    },
    "paid": {}
   },
@@ -22,7 +23,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 188.25
+    "1": 188.25,
+    "2": 149.75
    },
    "paid": {
     "1": true
@@ -35,7 +37,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 187.65
+    "1": 187.65,
+    "2": 157.75
    },
    "paid": {}
   },
@@ -46,7 +49,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 186.75
+    "1": 186.75,
+    "2": 150.75
    },
    "paid": {
     "1": true
@@ -59,7 +63,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 180.35
+    "1": 180.35,
+    "2": 148.1
    },
    "paid": {}
   },
@@ -70,7 +75,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 172.9
+    "1": 172.9,
+    "2": 154.95
    },
    "paid": {
     "1": true
@@ -83,7 +89,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 170.6
+    "1": 170.6,
+    "2": 155.1
    },
    "paid": {
     "1": true
@@ -96,7 +103,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 169.7
+    "1": 169.7,
+    "2": 177.45
    },
    "paid": {
     "1": true
@@ -109,7 +117,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 168.5
+    "1": 168.5,
+    "2": 160.6
    },
    "paid": {
     "1": true
@@ -122,7 +131,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 166.95
+    "1": 166.95,
+    "2": 148.95
    },
    "paid": {
     "1": true
@@ -135,7 +145,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 166.75
+    "1": 166.75,
+    "2": 122.55
    },
    "paid": {
     "1": true
@@ -148,7 +159,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 162.2
+    "1": 162.2,
+    "2": 158.05
    },
    "paid": {}
   },
@@ -159,7 +171,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 158.7
+    "1": 158.7,
+    "2": 185.1
    },
    "paid": {
     "1": true
@@ -172,7 +185,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 158.7
+    "1": 158.7,
+    "2": 145.1
    },
    "paid": {}
   },
@@ -183,7 +197,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 154.85
+    "1": 154.85,
+    "2": 162.25
    },
    "paid": {
     "1": true
@@ -196,7 +211,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 150.3
+    "1": 150.3,
+    "2": 129.7
    },
    "paid": {
     "1": true
@@ -209,7 +225,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 149.95
+    "1": 149.95,
+    "2": 174.35
    },
    "paid": {
     "1": true
@@ -222,7 +239,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 146.75
+    "1": 146.75,
+    "2": 167.35
    },
    "paid": {
     "1": true
@@ -235,7 +253,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 146.65
+    "1": 146.65,
+    "2": 186.2
    },
    "paid": {
     "1": true
@@ -248,7 +267,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 145.9
+    "1": 145.9,
+    "2": 170.7
    },
    "paid": {
     "1": true
@@ -261,7 +281,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 145.7
+    "1": 145.7,
+    "2": 155.55
    },
    "paid": {
     "1": true
@@ -274,7 +295,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 145.4
+    "1": 145.4,
+    "2": 92.5
    },
    "paid": {}
   },
@@ -285,7 +307,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 142
+    "1": 142,
+    "2": 140.35
    },
    "paid": {
     "1": true
@@ -298,7 +321,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 141.95
+    "1": 141.95,
+    "2": 121.15
    },
    "paid": {}
   },
@@ -309,7 +333,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 137.5
+    "1": 137.5,
+    "2": 76.7
    },
    "paid": {}
   },
@@ -320,7 +345,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 134.8
+    "1": 134.8,
+    "2": 168.35
    },
    "paid": {
     "1": true
@@ -333,7 +359,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 132.45
+    "1": 132.45,
+    "2": 141.25
    },
    "paid": {
     "1": true
@@ -346,7 +373,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 112.15
+    "1": 112.15,
+    "2": 160.15
    },
    "paid": {
     "1": true
@@ -359,7 +387,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 107.7
+    "1": 107.7,
+    "2": 108.5
    },
    "paid": {
     "1": true
@@ -372,7 +401,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 101
+    "1": 101,
+    "2": 149.7
    },
    "paid": {
     "1": true
@@ -385,7 +415,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 97.95
+    "1": 97.95,
+    "2": 104.7
    },
    "paid": {}
   },
@@ -396,7 +427,8 @@
    "joinedFrom": 1,
    "outFrom": null,
    "pts": {
-    "1": 71.55
+    "1": 71.55,
+    "2": 123.35
    },
    "paid": {}
   },
