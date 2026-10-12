@@ -2,7 +2,7 @@
  "liga": "Caffe Portus Liga",
  "ukupnoKola": 38,
  "kolaPoRundi": 5,
- "azurirano": "2026-10-12 09:23",
+ "azurirano": "2026-10-12 09:55",
  "igraci": [
   {
    "id": "p01",
@@ -352,7 +352,9 @@
     "3": 104.1,
     "4": 58.5
    },
-   "paid": {}
+   "paid": {
+    "1": true
+   }
   },
   {
    "id": "p23",
